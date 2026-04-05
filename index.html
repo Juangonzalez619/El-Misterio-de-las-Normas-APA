@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🔍 El Misterio de las Normas APA - Juego Educativo</title>
+  <meta name="description" content="Juego interactivo para aprender Normas APA 7ª edición resolviendo un misterio académico">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    :root {
+      --primary: #1a3a5c;
+      --secondary: #2c5f8d;
+      --accent: #e67e22;
+      --light: #f8f9fa;
+      --dark: #2c3e50;
+      --success: #27ae60;
+      --error: #e74c3c;
+      --warning: #f39c12;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      --transition: all 0.3s ease;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+      color: var(--light);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .game-container {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--dark);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .game-header {
+      background: linear-gradient(120deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 25px 30px;
+      text-align: center;
+      position: relative;
+    }
+    
+    .game-title {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    
+    .game-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+      font-weight: 300;
+    }
+    
+    .game-badge {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      background: var(--accent);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+    
+    .game-content {
+      padding: 30px;
+    }
+    
+    .scene {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .scene.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .story-text {
+      font-size: 1.15rem;
+      margin-bottom: 25px;
+      line-height: 1.7;
+      padding: 20px;
+      background: #f8fafc;
+      border-left: 4px solid var(--secondary);
+      border-radius: 0 8px 8px 0;
+      position: relative;
+    }
+    
+    .story-text::before {
+      content: """;
+      position: absolute;
+      top: -20px;
+      left: 10px;
+      font-size: 5rem;
+      color: rgba(44, 95, 141, 0.1);
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    
+    .question-card {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      margin: 25px 0;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      border: 1px solid #eaeaea;
+    }
+    
+    .question-text {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+      padding-bottom: 15px;
+      border-bottom: 2px dashed #e0e6ed;
+    }
+    
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .option {
+      padding: 16px 20px;
+      background: #f1f5f9;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .option:hover {
+      background: #e2e8f0;
+      border-color: var(--secondary);
+      transform: translateX(5px);
+    }
+    
+    .option.selected {
+      background: #dbeafe;
+      border-color: var(--secondary);
+      font-weight: 500;
+    }
+    
+    .option.correct {
+      background: #dcfce7;
+      border-color: var(--success);
+      position: relative;
+    }
+    
+    .option.correct::after {
+      content: "✓";
+      position: absolute;
+      right: 15px;
+      color: var(--success);
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    
+    .option.incorrect {
+      background: #fee2e2;
+      border-color: var(--error);
+      position: relative;
+    }
+    
+    .option.incorrect::after {
+      content: "✗";
+      position: absolute;
+      right: 15px;
+      color: var(--error);
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+    
+    .feedback {
+      margin: 20px 0;
+      padding: 18px;
+      border-radius: 12px;
+      font-weight: 500;
+      display: none;
+    }
+    
+    .feedback.correct {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      display: block;
+      animation: slideIn 0.4s ease;
+    }
+    
+    .feedback.incorrect {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      display: block;
+      animation: slideIn 0.4s ease;
+    }
+    
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .explanation {
+      background: #f0f7ff;
+      border-left: 4px solid var(--secondary);
+      padding: 15px 20px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.95rem;
+      display: none;
+    }
+    
+    .explanation.show {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .clue-revealed {
+      background: linear-gradient(135deg, #fff9e6, #fff3cd);
+      border: 2px solid #f0e0a0;
+      border-radius: 16px;
+      padding: 20px;
+      margin: 25px 0;
+      text-align: center;
+      font-weight: 600;
+      color: #856404;
+      display: none;
+      animation: none;
+    }
+    
+    .clue-revealed.show {
+      display: block;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4); }
+      70% { box-shadow: 0 0 0 12px rgba(243, 156, 18, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); }
+    }
+    
+    .progress-container {
+      margin: 25px 0;
+      text-align: center;
+    }
+    
+    .progress-bar {
+      height: 12px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--secondary), var(--accent));
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+    
+    .progress-text {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 0.95rem;
+    }
+    
+    .btn {
+      background: linear-gradient(120deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 16px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 14px rgba(26, 58, 92, 0.3);
+      margin-top: 10px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26, 58, 92, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(1px);
+    }
+    
+    .btn:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .btn-secondary {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--secondary);
+    }
+    
+    .btn-secondary:hover {
+      background: #f1f5f9;
+    }
+    
+    .btn-container {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .score-display {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 20px 0;
+      padding: 15px;
+      background: #f0f7ff;
+      border-radius: 16px;
+      border: 2px solid #bfdbfe;
+    }
+    
+    .ending-screen {
+      text-align: center;
+      padding: 20px 10px;
+    }
+    
+    .ending-title {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      color: var(--primary);
+      font-weight: 800;
+    }
+    
+    .ending-message {
+      font-size: 1.3rem;
+      margin: 25px 0;
+      line-height: 1.7;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .suspect-card {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      margin: 25px auto;
+      max-width: 600px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      border: 3px solid var(--accent);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .suspect-card::before {
+      content: "🔍 CASO RESUELTO";
+      position: absolute;
+      top: 10px;
+      right: -35px;
+      background: var(--accent);
+      color: white;
+      padding: 5px 40px;
+      transform: rotate(45deg);
+      font-weight: bold;
+      font-size: 0.9rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+    
+    .suspect-name {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--error);
+      margin: 15px 0;
+      text-align: center;
+    }
+    
+    .suspect-motive {
+      background: #fff9e6;
+      border-left: 4px solid var(--warning);
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+    }
+    
+    .certificate {
+      background: linear-gradient(135deg, #f8f9ff, #eef2f7);
+      border: 3px solid var(--secondary);
+      border-radius: 20px;
+      padding: 30px;
+      margin: 30px 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .certificate::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(44,95,141,0.08) 0%, transparent 70%);
+      z-index: 0;
+    }
+    
+    .certificate-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .certificate-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 15px 0;
+    }
+    
+    .certificate-name {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin: 10px 0 25px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    .certificate-seal {
+      width: 100px;
+      height: 100px;
+      border: 4px dashed var(--secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 25px auto;
+      font-weight: bold;
+      color: var(--secondary);
+      font-size: 0.9rem;
+      position: relative;
+    }
+    
+    .certificate-seal::after {
+      content: "✓";
+      position: absolute;
+      font-size: 3rem;
+      color: var(--success);
+      font-weight: bold;
+    }
+    
+    .game-footer {
+      text-align: center;
+      padding: 25px;
+      background: #f1f5f9;
+      color: var(--dark);
+      font-size: 0.9rem;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 20px;
+    }
+    
+    .game-footer a {
+      color: var(--secondary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .game-footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .character {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 20px 0;
+      padding: 15px;
+      background: #f8fafc;
+      border-radius: 12px;
+      border-left: 4px solid var(--accent);
+    }
+    
+    .character-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: white;
+      flex-shrink: 0;
+      font-weight: bold;
+    }
+    
+    .character-name {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+    
+    .character-role {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-top: 3px;
+    }
+    
+    .hint-badge {
+      display: inline-block;
+      background: var(--warning);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    
+    .apa-reference {
+      background: #f0f7ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .apa-reference strong {
+      color: var(--primary);
+    }
+    
+    .quote-example {
+      background: #fff9e6;
+      border-left: 4px solid var(--warning);
+      padding: 15px 20px;
+      margin: 15px 0;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      position: relative;
+    }
+    
+    .quote-example::before {
+      content: """;
+      font-size: 2rem;
+      color: var(--warning);
+      position: absolute;
+      top: -10px;
+      left: 10px;
+    }
+    
+    @media (max-width: 768px) {
+      .game-title {
+        font-size: 1.8rem;
+      }
+      
+      .game-subtitle {
+        font-size: 1rem;
+      }
+      
+      .game-content {
+        padding: 20px;
+      }
+      
+      .story-text {
+        font-size: 1.05rem;
+        padding: 15px;
+      }
+      
+      .question-text {
+        font-size: 1.15rem;
+      }
+      
+      .option {
+        padding: 14px 18px;
+        font-size: 1rem;
+      }
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .btn-container {
+        flex-direction: column;
+      }
+      
+      .certificate-name {
+        font-size: 1.8rem;
+      }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease forwards;
+    }
+    
+    .slide-up {
+      animation: slideUp 0.5s ease forwards;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .confetti {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background-color: #f00;
+      border-radius: 50%;
+      animation: confetti-fall 5s ease-in-out forwards;
+      z-index: 100;
+      opacity: 0;
+    }
+    
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <div class="game-header">
+      <div class="game-badge">APA 7ª ED.</div>
+      <h1 class="game-title">🔍 El Misterio de las Normas APA</h1>
+      <p class="game-subtitle">Resuelve el caso aplicando las reglas de la 7ª edición de las Normas APA</p>
+    </div>
+    
+    <div class="game-content">
+      <!-- Scene 0: Introduction -->
+      <div id="scene-0" class="scene active">
+        <div class="story-text">
+          <p>La <strong>Universidad del Conocimiento</strong> está en crisis. Alguien ha estado <em>corrompiendo</em> los trabajos académicos con errores en las Normas APA 7ª edición. Tesis mal formateadas, referencias incorrectas, citas sin autor... ¡El caos académico amenaza con destruir la credibilidad de la institución!</p>
+          <br>
+          <p>Tú eres <strong>Alex Rivera</strong>, nuevo detective especializado en escritura académica. Tu misión: investigar 7 casos, aplicar las reglas APA correctas y descubrir quién está detrás de este sabotaje.</p>
+        </div>
+        
+        <div class="character">
+          <div class="character-avatar">👤</div>
+          <div>
+            <div class="character-name">Alex Rivera <span class="hint-badge">Tú</span></div>
+            <div class="character-role">Detective de Normas APA • Especialista en escritura académica</div>
+          </div>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-text">Progreso del caso: <span id="progress-text">0/7</span></div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+        
+        <div class="btn-container">
+          <button class="btn" id="start-btn">
+            🔍 Comenzar la investigación
+          </button>
+        </div>
+      </div>
+      
+      <!-- Scene 1: Case 1 - Cita parentética -->
+      <div id="scene-1" class="scene">
+        <div class="story-text">
+          <p><strong>CASO #1: La cita parentética</strong></p>
+          <br>
+          <p>Encontraste un trabajo donde alguien escribió:</p>
+          <div class="quote-example">
+            "El cambio climático afecta la biodiversidad global (García, 2020)."
+          </div>
+          <br>
+          <p>Esta es una <strong>cita parentética</strong>. Según APA 7ª, ¿dónde debe colocarse el punto final en relación con el paréntesis de la cita?</p>
+        </div>
+        
+        <div class="question-card">
+          <div class="question-text">En una cita parentética APA 7ª, ¿dónde va el punto final?</div>
+          <div class="options">
+            <div class="option" data-value="a">Antes del paréntesis: "...biodiversidad." (García, 2020)</div>
+            <div class="option" data-value="b">Dentro del paréntesis: (García, 2020.)</div>
+            <div class="option" data-value="c">Después del paréntesis: (García, 2020).</div>
+            <div class="option" data-value="d">No se usa punto en citas</div>
+          </div>
+        </div>
+        
+        <div class="feedback" id="feedback-1"></div>
+        <div class="explanation" id="explanation-1">
+          <strong>Explicación APA 7ª:</strong> En las citas parentéticas, el punto final va <strong>después</strong> del paréntesis que contiene la cita. Formato correcto: "El cambio climático afecta la biodiversidad global" (García, 2020). El paréntesis es parte de la oración, no del contenido citado.
+        </div>
+        
+        <div class="clue-revealed" id="clue-1">
+          🔎 PISTA REVELADA: El sospechoso siempre pone el punto antes del paréntesis... como en otros estilos de citación.
+        </div>
+        
+        <div class="btn-container">
+          <button class="btn btn-secondary" id="back-1">← Volver</button>
+          <button class="btn" id="next-1" disabled>Siguiente caso →</button>
+        </div>
+      </div>
+      
+      <!-- Scene 2: Case 2 - Cita narrativa -->
+      <div id="scene-2" class="scene">
+        <div class="story-text">
+          <p><strong>CASO #2: La cita narrativa</strong></p>
+          <br>
+          <p>Encontraste este párrafo en una tesis:</p>
+          <div class="quote-example">
+            Según García (2020), "el cambio climático afecta la biodiversidad global" (p. 45).
+          </div>
+          <br>
+          <p>Esta es una <strong>cita narrativa</strong> (el autor es parte del texto). Según APA 7ª, ¿qué elemento es INCORRECTO en esta cita?</p>
+        </div>
+        
+        <div class="question-card">
+          <div class="question-text">En una cita narrativa APA 7ª con página específica, ¿qué es INCORRECTO?</div>
+          <div class="options">
+            <div class="option" data-value="a">Incluir el año después del nombre del autor</div>
+            <div class="option" data-value="b">Poner el número de página entre paréntesis al final</div>
+            <div class="option" data-value="c">Usar "p." antes del número de página</div>
+            <div class="option" data-value="d">Incluir el número de página dentro del paréntesis del autor</div>
+          </div>
+        </div>
+        
+        <div class="feedback" id="feedback-2"></div>
+        <div class="explanation" id="explanation-2">
+          <strong>Explicación APA 7ª:</strong> En citas narrativas con número de página, el año va después del nombre del autor en el texto, y el número de página va en paréntesis <strong>al final de la cita</strong>, no junto al autor. Formato correcto: Según García (2020), "el cambio climático..." (p. 45).
+        </div>
+        
+        <div class="clue-revealed" id="clue-2">
+          🔎 PISTA REVELADA: El culpable mezcla el formato de citas narrativas y parentéticas...
+        </div>
+        
+        <div class="btn-container">
+          <button class="btn btn-secondary" id="back-2">← Volver</button>
+          <button class="btn" id="next-2" disabled>Siguiente caso →</button>
+        </div>
+      </div>
+      
+      <!-- Scene 3: Case 3 - Cita menos de 40 palabras -->
+      <div id="scene-3" class="scene">
+        <div class="story-text">
+          <p><strong>CASO #3: La cita corta</strong></p>
+          <br>
+          <p>Encontraste esta cita en un documento:</p>
+          <div class="quote-example">
+            "Los resultados muestran una correlación significativa entre las variables estudiadas" (Martínez, 2021, p. 112).
+          </div>
+          <br>
+          <p>Esta cita tiene <strong>menos de 40 palabras</strong>. Según APA 7ª, ¿cómo debe formatearse una cita directa de menos de 40 palabras?</p>
+        </div>
+        
+        <div class="question-card">
+          <div class="question-text">¿Cómo se formatea una cita directa de MENOS de 40 palabras en APA 7ª?</div>
+          <div class="options">
+            <div class="option" data-value="a">En bloque separado, sin comillas, con sangría de 1.27 cm</div>
+            <div class="option" data-value="b">Entre comillas, integrada en el párrafo normal</div>
+            <div class="option" data-value="c">En cursiva y entre corchetes</div>
+            <div class="option" data-value="d">En un cuadro separado con borde</div>
+          </div>
+        </div>
+        
+        <div class="feedback" id="feedback-3"></div>
+        <div class="explanation" id="explanation-3">
+          <strong>Explicación APA 7ª:</strong> Las citas directas de <strong>menos de 40 palabras</strong> se integran en el párrafo normal, <strong>entre comillas dobles</strong>, con la cita parentética o narrativa correspondiente. No llevan sangría especial ni formato de bloque.
+        </div>
+        
+        <div class="clue-revealed" id="clue-3">
+          🔎 PISTA REVELADA: El sospechoso usa formato de bloque para citas cortas... desperdiciando espacio.
+        </div>
+        
+        <div class="btn-container">
+          <button class="btn btn-secondary" id="back-3">← Volver</button>
+          <button class="btn" id="next-3" disabled>Siguiente caso →</button>
+        </div>
+      </div>
+      
+      <!-- Scene 4: Case 4 - Cita más de 40 palabras -->
+      <div id="scene-4" class="scene">
+        <div class="story-text">
+          <p><strong>CASO #4: La cita extensa</strong></p>
+          <br>
+          <p>Encontraste esta cita en una tesis:</p>
+          <div class="quote-example" style="border-left: 4px solid var(--secondary); padding-left: 20px; margin-left: 20px;">
+            Los resultados de este estudio demuestran que existe una relación significativa entre las variables independientes y dependientes, lo cual confirma las hipótesis planteadas inicialmente en la investigación. Estos hallazgos tienen implicaciones importantes para futuras investigaciones en el campo. (Martínez, 2021, p. 115)
+          </div>
+          <br>
+          <p>Esta cita tiene <strong>más de 40 palabras</strong>. Según APA 7ª, ¿qué elemento es INCORRECTO en este formato de cita en bloque?</p>
+        </div>
+        
+        <div class="question-card">
+          <div class="question-text">¿Qué es INCORRECTO en una cita en bloque (40+ palabras) APA 7ª?</div>
+          <div class="options">
+            <div class="option" data-value="a">Usar comillas alrededor del texto citado</div>
+            <div class="option" data-value="b">Aplicar sangría de 1.27 cm en todo el bloque</div>
+            <div class="option" data-value="c">Colocar el punto antes del paréntesis de la cita</div>
+            <div class="option" data-value="d">No usar comillas y usar sangría</div>
+          </div>
+        </div>
+        
+        <div class="feedback" id="feedback-4"></div>
+        <div class="explanation" id="explanation-4">
+          <strong>Explicación APA 7ª:</strong> Las citas en bloque (40+ palabras) <strong>NO llevan comillas</strong>. Se formatan con sangría de 1.27 cm en todo el bloque, doble espacio, y el punto va <strong>antes</strong> del paréntesis de la cita. Ejemplo: ...en el campo. (Martínez, 2021, p. 115)
+        </div>
+        
+        <div class="clue-revealed" id="clue-4">
+          🔎 PISTA REVELADA: El culpable siempre pone comillas en citas en bloque... como si fueran citas cortas.
+        </div>
+        
+        <div class="btn-container">
+          <button class="btn btn-secondary" id="back-4">← Volver</button>
+          <button class="btn" id="next-4" disabled>Siguiente caso →</button>
+        </div>
+      </div>
+      
+      <!-- Scene 5: Case 5 - Tres o más autores -->
+      <div id="scene-5" class="scene">
+        <div class="story-text">
+          <p><strong>CASO #5: Los autores múltiples</strong></p>
+          <br>
+          <p>Encontraste un trabajo de investigación donde alguien escribió:</p>
+          <div class="quote-example">
+            "El cambio climático afecta la biodiversidad" (García, López y Martínez, 2020, p. 45).
+          </div>
+          <br>
+          <p>Pero al revisar la referencia bibliográfica, descubres que la obra tiene <strong>tres autores</strong>: García, López y Martínez. Según APA 7ª, ¿cómo debería citarse correctamente?</p>
+        </div>
+        
+        <div class="question-card">
+          <div class="question-text">¿Cómo se cita en el texto una obra con TRES o más autores en APA 7ª?</div>
+          <div class="options">
+            <div class="option" data-value="a">(García, López y Martínez, 2020)</div>
+            <div class="option" data-value="b">(García et al., 2020)</div>
+            <div class="option" data-value="c">(García, López, & Martínez, 2020)</div>
+            <div class="option" data-value="d">(García y col., 2020)</div>
+          </div>
+        </div>
+        
+        <div class="feedback" id="feedback-5"></div>
+        <div class="explanation" id="explanation-5">
+          <strong>Explicación APA 7ª:</strong> Para obras con <strong>tres o más autores</strong>, se cita solo el apellido del primer autor seguido de <strong>"et al."</strong> desde la primera mención en el texto. Ejemplo: (García et al., 2020). La lista completa de autores solo aparece en la referencia bibliográfica.
+        </div>
+        
+        <div class="clue-revealed" id="clue-5">
+          🔎 PISTA REVELADA: El sospechoso siempre escribe todos los autores en las citas... usando formato antiguo.
+        </div>
+        
+        <div class="btn-container">
+          <button class="btn btn-secondary" id="back-5">← Volver</button>
+          <button class="btn" id="next-5" disabled>Siguiente caso →</button>
+        </div>
+      </div>
+      
+      <!-- Scene 6: Case 6 - Referencias de libros -->
+      <div id="scene-6" class="scene">
+        <div class="story-text">
+          <p><strong>CASO #6: La referencia sospechosa</strong></p>
+          <br>
+          <p>Encontraste esta referencia en una tesis:</p>
+          <div class="apa-reference">
+            Pérez, J. (2022). <em>Inteligencia artificial en educación</em>. Madrid, España: Editorial Académica. https://doi.org/10.1234/ejemplo
+          </div>
+          <br>
+          <p>Según APA 7ª, ¿qué elemento <strong>NO</strong> debería incluirse en esta referencia de libro?</p>
+        </div>
+        
+        <div class="question-card">
+          <div class="question-text">¿Qué elemento es INCORRECTO en una referencia APA 7ª de libro con DOI?</div>
+          <div class="options">
+            <div class="option" data-value="a">Incluir la ciudad y país de la editorial</div>
+            <div class="option" data-value="b">Usar cursiva para el título del libro</div>
+            <div class="option" data-value="c">Incluir el DOI como enlace https</div>
+            <div class="option" data-value="d">Poner el año entre paréntesis después del autor</div>
+          </div>
+        </div>
+        
+        <div class="feedback" id="feedback-6"></div>
+        <div class="explanation" id="explanation-6">
+          <strong>Explicación APA 7ª:</strong> En la 7ª edición de APA, <strong>ya NO se incluye la ciudad/país de la editorial</strong> en las referencias de libros. Solo se incluye: Autor, año, título en cursiva, editorial y DOI/URL si aplica. Esto cambió desde la 6ª edición.
+        </div>
+        
+        <div class="clue-revealed" id="clue-6">
+          🔎 PISTA REVELADA: El culpable siempre incluye ciudades en las referencias... usa reglas de APA 6ª edición.
+        </div>
+        
+        <div class="btn-container">
+          <button class="btn btn-secondary" id="back-6">← Volver</button>
+          <button class="btn" id="next-6" disabled>Siguiente caso →</button>
+        </div>
+      </div>
+      
+      <!-- Scene 7: Case 7 - Final confrontation -->
+      <div id="scene-7" class="scene">
+        <div class="story-text">
+          <p><strong>CASO FINAL: La confrontación</strong></p>
+          <br>
+          <p>Has recopilado todas las pistas. El sospechoso tiene un patrón claro: usa reglas de <strong>APA 6ª edición</strong> en lugar de la 7ª. Tienes tres sospechosos:</p>
+          
+          <div class="character">
+            <div class="character-avatar">👨‍🏫</div>
+            <div>
+              <div class="character-name">Prof. Ramírez</div>
+              <div class="character-role">Decano de la Facultad • Conoce APA pero prefiere "lo clásico"</div>
+            </div>
+          </div>
+          
+          <div class="character">
+            <div class="character-avatar">👩‍💻</div>
+            <div>
+              <div class="character-name">Dra. Mendoza</div>
+              <div class="character-role">Directora de Biblioteca • Actualizada con APA 7ª</div>
+            </div>
+          </div>
+          
+          <div class="character">
+            <div class="character-avatar">🧑‍🎓</div>
+            <div>
+              <div class="character-name">Carlos Vega</div>
+              <div class="character-role">Estudiante de posgrado • Usa plantillas antiguas</div>
+            </div>
+          </div>
+          
+          <br>
+          <p>Basado en las pistas recopiladas, ¿quién es el responsable de los errores APA en la universidad?</p>
+        </div>
+        
+        <div class="question-card">
+          <div class="question-text">¿Quién es el culpable de sabotear los trabajos con normas APA incorrectas?</div>
+          <div class="options">
+            <div class="option" data-value="a">Prof. Ramírez</div>
+            <div class="option" data-value="b">Dra. Mendoza</div>
+            <div class="option" data-value="c">Carlos Vega</div>
+            <div class="option" data-value="d">Ninguno, fue un error del sistema</div>
+          </div>
+        </div>
+        
+        <div class="feedback" id="feedback-7"></div>
+        <div class="explanation" id="explanation-7">
+          <strong>¡Caso resuelto!</strong> El culpable es <strong>Carlos Vega</strong>. Como estudiante de posgrado, usa plantillas de tesis antiguas basadas en APA 6ª edición (que incluía ciudades de publicación, todos los autores en citas, comillas en bloques, etc.). No es malintencionado, solo necesita actualizar sus recursos. ¡La Dra. Mendoza te ayudará a organizar un taller de APA 7ª para todos los estudiantes!
+        </div>
+        
+        <div class="btn-container">
+          <button class="btn btn-secondary" id="back-7">← Volver</button>
+          <button class="btn" id="solve-case">🔍 Revelar al culpable</button>
+        </div>
+      </div>
+      
+      <!-- Ending Screen -->
+      <div id="scene-ending" class="scene">
+        <div class="ending-screen">
+          <div class="ending-title">🎉 ¡CASO RESUELTO!</div>
+          
+          <div class="suspect-card">
+            <p class="suspect-name">Carlos Vega</p>
+            <p><strong>Motivo:</strong> Uso de plantillas y guías basadas en APA 6ª edición por desconocimiento de la actualización a la 7ª edición.</p>
+            <div class="suspect-motive">
+              "Pensé que las normas no habían cambiado mucho... ¡Gracias por ayudarme a actualizarme!"
+            </div>
+          </div>
+          
+          <div class="score-display">
+            Puntuación: <span id="final-score">0</span>/7 casos resueltos
+          </div>
+          
+          <div class="certificate">
+            <div class="certificate-content">
+              <div style="font-size: 3rem; margin-bottom: 10px;">🏆</div>
+              <div class="certificate-title">Certificado de Detective APA</div>
+              <p>Se otorga a</p>
+              <div class="certificate-name" id="player-name">Alex Rivera</div>
+              <p>por demostrar dominio de las Normas APA 7ª edición<br>y resolver el misterio académico de la Universidad del Conocimiento</p>
+              <div class="certificate-seal">OFICIAL</div>
+              <p style="margin-top: 15px; font-weight: 600;">Fecha: <span id="certificate-date"></span></p>
+            </div>
+          </div>
+          
+          <p class="ending-message">
+            ¡Excelente trabajo! Has ayudado a restaurar la integridad académica de la universidad. 
+            Recuerda: Las Normas APA 7ª edición priorizan la claridad, la inclusión y la adaptabilidad 
+            a recursos digitales. ¡Comparte este conocimiento con tus compañeros!
+          </p>
+          
+          <div class="btn-container">
+            <button class="btn" id="play-again">🔄 Jugar de nuevo</button>
+            <button class="btn btn-secondary" id="download-cert">📥 Descargar certificado</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="game-footer">
+      <p>🎮 Juego educativo sobre Normas APA 7ª edición • Desarrollado para GitHub Pages</p>
+      <p>💡 ¿Quieres publicar tu versión? <a href="https://pages.github.com" target="_blank">GitHub Pages Guide</a></p>
+      <p style="margin-top: 8px; font-size: 0.85rem; color: #64748b;">
+        Recursos APA oficiales: <a href="https://apastyle.apa.org" target="_blank">apastyle.apa.org</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Game state
+    const gameState = {
+      currentScene: 0,
+      score: 0,
+      answers: {},
+      playerName: "Alex Rivera",
+      completedCases: 0
+    };
+
+    // Correct answers for each case
+    const correctAnswers = {
+      1: "c", // Punto después del paréntesis
+      2: "d", // Número de página no va con el autor en narrativa
+      3: "b", // Entre comillas, integrado en párrafo
+      4: "a", // No usar comillas en bloque
+      5: "b", // et al. para 3+ autores
+      6: "a", // No incluir ciudad de publicación
+      7: "c"  // Carlos Vega es el culpable
+    };
+
+    // DOM Elements
+    const scenes = document.querySelectorAll('.scene');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const finalScoreEl = document.getElementById('final-score');
+    const certificateDateEl = document.getElementById('certificate-date');
+    
+    // Initialize game
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set certificate date
+      const today = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      certificateDateEl.textContent = today.toLocaleDateString('es-ES', options);
+      
+      // Start button
+      document.getElementById('start-btn').addEventListener('click', () => {
+        showScene(1);
+        updateProgress();
+      });
+      
+      // Back buttons
+      for (let i = 1; i <= 7; i++) {
+        document.getElementById(`back-${i}`).addEventListener('click', () => {
+          if (i > 1) {
+            showScene(i - 1);
+          } else {
+            showScene(0);
+          }
+        });
+      }
+      
+      // Next buttons setup
+      for (let i = 1; i <= 6; i++) {
+        setupCase(i);
+      }
+      
+      // Final case button
+      document.getElementById('solve-case').addEventListener('click', () => {
+        handleAnswer(7);
+      });
+      
+      // Play again button
+      document.getElementById('play-again').addEventListener('click', resetGame);
+      
+      // Download certificate (simulated)
+      document.getElementById('download-cert').addEventListener('click', () => {
+        alert('🎉 ¡Certificado generado!\n\nEn una implementación real, aquí se descargaría un PDF con tu certificado de Detective APA.\n\n¡Gracias por jugar!');
+      });
+      
+      // Option selection
+      document.querySelectorAll('.option').forEach(option => {
+        option.addEventListener('click', function() {
+          // Remove selected class from siblings
+          this.parentElement.querySelectorAll('.option').forEach(opt => {
+            opt.classList.remove('selected');
+          });
+          // Add selected to clicked
+          this.classList.add('selected');
+          // Enable next button
+          const caseNum = this.closest('.scene').id.split('-')[1];
+          const nextBtn = document.getElementById(`next-${caseNum}`);
+          const solveBtn = document.getElementById('solve-case');
+          if (nextBtn) nextBtn.disabled = false;
+          if (solveBtn && caseNum == 7) solveBtn.disabled = false;
+        });
+      });
+    });
+    
+    // Setup each case
+    function setupCase(caseNum) {
+      const nextBtn = document.getElementById(`next-${caseNum}`);
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          handleAnswer(caseNum);
+        });
+      }
+    }
+    
+    // Handle answer submission
+    function handleAnswer(caseNum) {
+      const selectedOption = document.querySelector(`#scene-${caseNum} .option.selected`);
+      if (!selectedOption) return;
+      
+      const userAnswer = selectedOption.dataset.value;
+      const isCorrect = userAnswer === correctAnswers[caseNum];
+      
+      // Show feedback
+      const feedbackEl = document.getElementById(`feedback-${caseNum}`);
+      const explanationEl = document.getElementById(`explanation-${caseNum}`);
+      const clueEl = document.getElementById(`clue-${caseNum}`);
+      
+      // Visual feedback on options
+      document.querySelectorAll(`#scene-${caseNum} .option`).forEach(opt => {
+        if (opt.dataset.value === correctAnswers[caseNum]) {
+          opt.classList.add('correct');
+        } else if (opt === selectedOption && !isCorrect) {
+          opt.classList.add('incorrect');
+        }
+      });
+      
+      // Show feedback message
+      if (isCorrect) {
+        feedbackEl.textContent = "✅ ¡Correcto! Has aplicado perfectamente la norma APA.";
+        feedbackEl.className = "feedback correct";
+        gameState.score++;
+        gameState.completedCases++;
+      } else {
+        feedbackEl.textContent = "❌ Incorrecto. Revisa la explicación para aprender la regla correcta.";
+        feedbackEl.className = "feedback incorrect";
+      }
+      
+      // Show explanation
+      explanationEl.classList.add('show');
+      
+      // Show clue ONLY when clicking next (not automatically)
+      clueEl.classList.add('show');
+      
+      // Update progress
+      updateProgress();
+      
+      // Next button behavior
+      const nextBtn = document.getElementById(`next-${caseNum}`);
+      if (nextBtn) {
+        nextBtn.textContent = caseNum < 7 ? "Siguiente caso →" : "Resolver caso final →";
+      }
+      
+      // Auto-advance after delay for cases 1-6
+      if (caseNum < 7) {
+        setTimeout(() => {
+          if (caseNum < 6) {
+            showScene(caseNum + 1);
+          } else {
+            // After case 6, go to final case
+            showScene(7);
+          }
+          // Reset button state for next scene
+          if (nextBtn) {
+            nextBtn.disabled = true;
+            nextBtn.textContent = `Siguiente caso →`;
+          }
+        }, 5000);
+      } else {
+        // Final case: go to ending
+        setTimeout(() => {
+          showEnding();
+        }, 4000);
+      }
+    }
+    
+    // Show specific scene
+    function showScene(sceneNum) {
+      // Hide all scenes
+      scenes.forEach(scene => scene.classList.remove('active'));
+      // Show requested scene
+      document.getElementById(`scene-${sceneNum}`).classList.add('active');
+      // Update game state
+      gameState.currentScene = sceneNum;
+      
+      // Reset case UI if returning to a case
+      if (sceneNum >= 1 && sceneNum <= 7) {
+        resetCaseUI(sceneNum);
+      }
+    }
+    
+    // Reset UI for a case when revisiting
+    function resetCaseUI(caseNum) {
+      // Hide feedback and explanations
+      document.getElementById(`feedback-${caseNum}`).className = "feedback";
+      document.getElementById(`explanation-${caseNum}`).classList.remove('show');
+      document.getElementById(`clue-${caseNum}`).classList.remove('show');
+      
+      // Remove visual feedback from options
+      document.querySelectorAll(`#scene-${caseNum} .option`).forEach(opt => {
+        opt.classList.remove('selected', 'correct', 'incorrect');
+      });
+      
+      // Disable next button
+      const nextBtn = document.getElementById(`next-${caseNum}`);
+      const solveBtn = document.getElementById('solve-case');
+      if (nextBtn) {
+        nextBtn.disabled = true;
+        nextBtn.textContent = `Siguiente caso →`;
+      }
+      if (solveBtn && caseNum == 7) {
+        solveBtn.disabled = true;
+      }
+    }
+    
+    // Show ending screen
+    function showEnding() {
+      scenes.forEach(scene => scene.classList.remove('active'));
+      document.getElementById('scene-ending').classList.add('active');
+      finalScoreEl.textContent = gameState.score;
+      
+      // Create confetti effect
+      createConfetti();
+    }
+    
+    // Update progress bar
+    function updateProgress() {
+      const progress = (gameState.completedCases / 7) * 100;
+      progressFill.style.width = `${progress}%`;
+      progressText.textContent = `${gameState.completedCases}/7`;
+    }
+    
+    // Reset game to initial state
+    function resetGame() {
+      gameState.currentScene = 0;
+      gameState.score = 0;
+      gameState.answers = {};
+      gameState.completedCases = 0;
+      
+      // Reset all UI elements
+      document.querySelectorAll('.feedback').forEach(el => {
+        el.className = "feedback";
+      });
+      
+      document.querySelectorAll('.explanation').forEach(el => {
+        el.classList.remove('show');
+      });
+      
+      document.querySelectorAll('.clue-revealed').forEach(el => {
+        el.classList.remove('show');
+      });
+      
+      document.querySelectorAll('.option').forEach(opt => {
+        opt.classList.remove('selected', 'correct', 'incorrect');
+      });
+      
+      document.querySelectorAll('.btn').forEach(btn => {
+        if (btn.id.startsWith('next-')) {
+          btn.disabled = true;
+          btn.textContent = `Siguiente caso →`;
+        }
+        if (btn.id === 'solve-case') {
+          btn.disabled = true;
+        }
+      });
+      
+      // Reset progress
+      progressFill.style.width = '0%';
+      progressText.textContent = '0/7';
+      
+      // Show intro scene
+      showScene(0);
+    }
+    
+    // Create confetti animation for ending
+    function createConfetti() {
+      const colors = ['#e67e22', '#2c5f8d', '#27ae60', '#e74c3c', '#f39c12', '#3498db'];
+      
+      for (let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.animationDelay = `${Math.random() * 2}s`;
+        confetti.style.opacity = Math.random();
+        document.body.appendChild(confetti);
+        
+        // Remove confetti after animation
+        setTimeout(() => {
+          confetti.remove();
+        }, 5000);
+      }
+    }
+  </script>
+</body>
+</html>
